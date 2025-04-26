@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() => runApp(const MyApp());
 
@@ -8,10 +9,13 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: Scaffold(appBar: AppBar(title: Text('Hello')), body: Level1()),
+    return ChangeNotifierProvider<Data>(
+      create: (context) => Data(),
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(primarySwatch: Colors.blue),
+        home: Scaffold(appBar: AppBar(title: MyText()), body: Level1()),
+      ),
     );
   }
 }
@@ -30,7 +34,7 @@ class Level2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [Level3()]);
+    return Column(children: [MyTextField(), Level3()]);
   }
 }
 
@@ -39,6 +43,37 @@ class Level3 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('Ac');
+    return Text(Provider.of<Data>(context).data);
+  }
+}
+
+class MyText extends StatelessWidget {
+  const MyText({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(Provider.of<Data>(context, listen: false).data);
+  }
+}
+
+class MyTextField extends StatelessWidget {
+  const MyTextField({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      onChanged: (value) {
+        Provider.of<Data>(context, listen: false).changeString(value);
+      },
+    );
+  }
+}
+
+class Data extends ChangeNotifier {
+  String data = 'Top Secret Data';
+
+  void changeString(String newValue) {
+    data = newValue;
+    notifyListeners();
   }
 }
